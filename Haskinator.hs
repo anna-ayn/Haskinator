@@ -52,8 +52,8 @@ interactuar oraculo = do
 crearVision :: IO ()
 crearVision = do 
     putStrLn "\n♦ Cuenta al gran Haskinator la visión que deseas incorporar a su conocimiento:"
-    prediccion <- getLine
-    let nuevoOraculo = crearOraculo prediccion
+    predic <- getLine
+    let nuevoOraculo = crearOraculo predic
     putStrLn "\n♦ La visión ha sido agregada al oráculo."
     interactuar nuevoOraculo
 
@@ -62,8 +62,7 @@ predecir :: Oraculo -> IO Oraculo
 predecir oraculo = do
     if esPrediccion oraculo
         then do
-            putStrLn "Es una prediccion..."
-            let vision = obtenerPred oraculo
+            let vision = prediccion oraculo
             if vision == "" then do
                 putStrLn "\n♦ El oráculo no posee conocimientos aún."
                 putStrLn "Por favor crea un nuevo oráculo o cargue la información al oráculo antes de predecir."
@@ -76,7 +75,7 @@ predecir oraculo = do
 
 proponerPred :: Oraculo -> IO Oraculo
 proponerPred oraculo = do
-    let vision = obtenerPred oraculo
+    let vision = prediccion oraculo
     putStrLn ("\nPredicción: " ++ vision)
     putStrLn "Si / No"
 
