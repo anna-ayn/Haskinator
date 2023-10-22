@@ -15,6 +15,7 @@ import qualified Data.Map as M
 
 data Oraculo = Prediccion String
     | Pregunta String Opciones
+    deriving(Show,Read)
 
 type Opciones = M.Map String Oraculo
 
