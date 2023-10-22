@@ -1,5 +1,5 @@
 module Oraculo (
-    Oraculo,
+    Oraculo(..),
     Opciones,
     crearOraculo,
     ramificar,
@@ -7,8 +7,7 @@ module Oraculo (
     pregunta,
     respuesta,
     opciones,
-    maybeOraculo,
-    esPrediccion
+    maybeOraculo
     ) where
 
 
@@ -21,11 +20,11 @@ type Opciones = M.Map String Oraculo
 
 -- Crear un nuevo oraculo
 crearOraculo :: String -> Oraculo
-crearOraculo prediccion = Prediccion prediccion
+crearOraculo pred = Prediccion pred
 
 -- Ramificar
 ramificar:: [String] -> [Oraculo] -> String -> Oraculo
-ramificar opciones oraculos pregunta = Pregunta pregunta (M.fromList (zip opciones oraculos))
+ramificar ops oraculos preg = Pregunta preg (M.fromList (zip ops oraculos))
 
 -- Obtiene la prediccion
 prediccion :: Oraculo -> String
@@ -51,8 +50,3 @@ maybeOraculo Nothing = error "No es una pregunta valida"
 respuesta :: Oraculo -> String -> Oraculo
 respuesta (Pregunta s op) preg = maybeOraculo(M.lookup preg op)
 respuesta (Prediccion s) _ = error "Debe ingresar una pregunta"
-
--- Si el Oraculo es una Prediccion, retorna True en caso contrario retorna False
-esPrediccion :: Oraculo -> Bool
-esPrediccion (Prediccion _) = True
-esPrediccion _ = False
