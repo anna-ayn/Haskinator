@@ -89,17 +89,18 @@ proponerPred oraculo = do
       "No" -> do 
         putStrLn "\n♦ ¡He fallado! ¿Cuál es la respuesta correcta?"
         rtaCorrecta <- getLine
-
-        putStrLn $ "♦ ¿Qué pregunta distingue a " ++ rtaCorrecta ++ " de las otras opciones?"
-        pregDiferencia <- getLine
-
-        putStrLn $ "♦ ¿Cuál es la respuesta a '" ++ pregDiferencia ++ "' para " ++ rtaCorrecta ++"?"
-        opCorrecta <- getLine
-
-        putStrLn $ "♦ ¿Cuál es la respuesta a '" ++ pregDiferencia ++ "' para " ++ vision ++"?"
-        otraOpcion <- getLine
-
-        return (ramificar [opCorrecta, otraOpcion] [crearOraculo rtaCorrecta, oraculo] pregDiferencia)
+        if rtaCorrecta == vision then do
+            putStrLn $ "\n♦ Ya existe la predicción '" ++ rtaCorrecta ++ "' en el oráculo."
+            putStrLn "Se va a rechazar la adición de esta predicción al oráculo por ser poco confiable."
+            return oraculo
+        else do
+            putStrLn $ "♦ ¿Qué pregunta distingue a " ++ rtaCorrecta ++ " de las otras opciones?"
+            pregDiferencia <- getLine
+            putStrLn $ "♦ ¿Cuál es la respuesta a '" ++ pregDiferencia ++ "' para " ++ rtaCorrecta ++"?"
+            opCorrecta <- getLine
+            putStrLn $ "♦ ¿Cuál es la respuesta a '" ++ pregDiferencia ++ "' para " ++ vision ++"?"
+            otraOpcion <- getLine
+            return (ramificar [opCorrecta, otraOpcion] [crearOraculo rtaCorrecta, oraculo] pregDiferencia)
       _ -> do 
         putStrLn "\n♦ ¡Opción inválida. Vuelve a introducirla."
         proponerPred oraculo
