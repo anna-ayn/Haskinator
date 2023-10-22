@@ -45,11 +45,8 @@ interactuar oraculo = do
             return ()
             
         _ -> do
-<<<<<<< HEAD
             putStrLn "\n♦ Opción inválida. Vuelve a introducirla"
-=======
             putStrLn "\nOpción inválida"
->>>>>>> 311a3b24bc160be8c8412b88f94375644653a5f8
             interactuar oraculo
 
 crearVision :: IO ()
