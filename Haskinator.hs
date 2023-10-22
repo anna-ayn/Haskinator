@@ -5,29 +5,30 @@ module Main (
 import Oraculo
 
 main = do
-    putStrLn "¡Bienvenido valiente viajero al gran oráculo Haskinator!"
-    putStrLn "Has logrado llegar hasta la apartada choza del poderoso Haskinator,"
-    putStrLn "oculta en lo profundo del bosque de los mil y un monads," 
-    putStrLn "a la vera del gran río Curry."
-    putStrLn "El destino te ha traído ante la presencia de su insondable sabiduría."
-    putStrLn "Con su vasto conocimiento, Haskinator podrá adivinar tus pensamientos"
-    putStrLn "haciéndote solo unas pocas y puntuales preguntas."
+    putStrLn "# ¡Bienvenido valiente viajero al gran oráculo Haskinator!"
+    putStrLn "# Has logrado llegar hasta la apartada choza del poderoso Haskinator,"
+    putStrLn "# oculta en lo profundo del bosque de los mil y un monads," 
+    putStrLn "# a la vera del gran río Curry."
+    putStrLn "# El destino te ha traído ante la presencia de su insondable sabiduría."
+    putStrLn "# Con su vasto conocimiento, Haskinator podrá adivinar tus pensamientos"
+    putStrLn "# haciéndote solo unas pocas y puntuales preguntas."
 
     interactuar $ crearOraculo ""
 
 interactuar :: Oraculo -> IO ()
 interactuar oraculo = do 
         
-    putStrLn "\n¿Qué deseas hacer ahora ante el poderoso Haskinator?\n"
-
-    putStrLn "Opciones:"
-    putStrLn "1. Crear Oraculo"
-    putStrLn "2. Predecir"
-    putStrLn "3. Persistir"
-    putStrLn "4. Cargar"
-    putStrLn "5. Consultar pregunta crucial"
-    putStrLn "6. Estadísticas"
-    putStrLn "7. Salir\n"
+    putStrLn "\n♦ ¿Qué deseas hacer ahora ante el poderoso Haskinator?\n"
+    putStrLn " -------------------------------------- "
+    putStrLn "|Opciones:                             |"
+    putStrLn "|1. Crear Oraculo                      |"
+    putStrLn "|2. Predecir                           |"
+    putStrLn "|3. Persistir                          |"
+    putStrLn "|4. Cargar                             |"
+    putStrLn "|5. Consultar pregunta crucial         |"
+    putStrLn "|6. Estadísticas                       |"
+    putStrLn "|7. Salir                              |"
+    putStrLn " -------------------------------------- "
 
     putStrLn "Ingrese solo el número de la opción:"
     opcion <- getLine
@@ -36,11 +37,11 @@ interactuar oraculo = do
         "1" -> crearVision
 
         "2" -> do
-            putStrLn "Codigo Para Predecir..."
-            interactuar oraculo 
+            nuevOraculo <- predecir oraculo
+            interactuar nuevOraculo
 
         "7" -> do
-            putStrLn "¡Hasta luego, viajero! Vuelve pronto."
+            putStrLn "♦ ¡Hasta luego, viajero! Vuelve pronto."
             return ()
             
         _ -> do
@@ -49,15 +50,58 @@ interactuar oraculo = do
 
 crearVision :: IO ()
 crearVision = do 
-    putStrLn "\nCuenta al gran Haskinator la visión que deseas incorporar a su conocimiento:"
+    putStrLn "\n♦ Cuenta al gran Haskinator la visión que deseas incorporar a su conocimiento:"
     prediccion <- getLine
     let nuevoOraculo = crearOraculo prediccion
-    putStrLn "\nLa visión ha sido agregada al oráculo."
+    putStrLn "\n♦ La visión ha sido agregada al oráculo."
     interactuar nuevoOraculo
 
 
+predecir :: Oraculo -> IO Oraculo
+predecir oraculo = do
+    if esPrediccion oraculo
+        then do
+            putStrLn "Es una prediccion..."
+            let vision = obtenerPred oraculo
+            if vision == "" then do
+                putStrLn "\n♦ El oráculo no posee conocimientos aún."
+                putStrLn "Por favor crea un nuevo oráculo o cargue la información al oráculo antes de predecir."
+                return oraculo
+            else do
+                proponerPred oraculo
+    else do
+        putStrLn "Es una pregunta..."
+        return oraculo
 
+proponerPred :: Oraculo -> IO Oraculo
+proponerPred oraculo = do
+    let vision = obtenerPred oraculo
+    putStrLn ("\nPredicción: " ++ vision)
+    putStrLn "Si / No"
 
+    input <- getLine
+
+    case input of
+      "Si" -> do 
+        putStrLn "\n♦ ¡He hecho la predicción correcta!"
+        return oraculo
+      "No" -> do 
+        putStrLn "\n♦ ¡He fallado! ¿Cuál es la respuesta correcta?"
+        rtaCorrecta <- getLine
+
+        putStrLn $ "♦ ¿Qué pregunta distingue a " ++ rtaCorrecta ++ " de las otras opciones?"
+        pregDiferencia <- getLine
+
+        putStrLn $ "♦ ¿Cuál es la respuesta a '" ++ pregDiferencia ++ "' para " ++ rtaCorrecta ++"?"
+        opCorrecta <- getLine
+
+        putStrLn $ "♦ ¿Cuál es la respuesta a '" ++ pregDiferencia ++ "' para " ++ vision ++"?"
+        otraOpcion <- getLine
+
+        return (ramificar [opCorrecta, otraOpcion] [crearOraculo rtaCorrecta, oraculo] pregDiferencia)
+      _ -> do 
+        putStrLn "\n♦ ¡Opción inválida. Vuelve a introducirla."
+        proponerPred oraculo
 
         
 
