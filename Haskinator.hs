@@ -163,3 +163,19 @@ printOpInvalida :: IO  ()
 printOpInvalida = do
     putStrLn "\n♦ El gran Haskinator no comprende tu elección." 
     putStrLn "Por favor, selecciona una de las opciones que se te ofrece."
+
+-- Funcion que guarda un oraculo en un archivo
+persistir :: Oraculo -> IO ()
+persistir oraculo = do
+    putStrLn "\n♦ ¿Cómo deseas llamar al archivo?"
+    nombre <- getLine
+    writeFile nombre (show oraculo)
+    putStrLn $ "\n♦ El oráculo ha sido guardado en el archivo '" ++ nombre ++ "'."
+
+-- Funcion que dado el nombre de un archivo, carga el oraculo que se encuentra en el archivo
+cargar :: String -> IO Oraculo
+cargar nombre = do
+    contenido <- readFile nombre
+    let oraculo = read contenido :: Oraculo
+    putStrLn $ "\n♦ El oráculo '" ++ nombre ++ "' ha sido cargado."
+    return oraculo
