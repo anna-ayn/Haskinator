@@ -2,6 +2,8 @@ module Main (
     main
 ) where
 
+import System.IO
+import Control.Exception
 import Oraculo
 import qualified Data.Map as M
 import Data.List (intercalate)
@@ -45,6 +47,11 @@ interactuar oraculo = do
         "3" -> do 
             persistir oraculo
             interactuar oraculo
+        "4" -> do
+            putStrLn "\n♦ ¿Cuál es el archivo que deseas mostrar al gran Haskinator?"
+            nombreArchivo <- getLine
+            oraculo <- cargar nombreArchivo
+            interactuar oraculo
         "7" -> do -- salir de haskinator
             putStrLn "\n♦ ¡Hasta luego, viajero! Vuelve pronto."
             return ()
@@ -71,7 +78,7 @@ predecir oraculo oracOriginal = do
             let vision = prediccion oraculo
             if vision == "" then do 
                 putStrLn "\n♦ El oráculo no posee conocimientos aún."
-                putStrLn "Por favor crea un nuevo oráculo o cargue la información al oráculo antes de predecir."
+                putStrLn "+ Por favor crea un nuevo oráculo o cargue la información al oráculo antes de predecir."
                 return oraculo
             else do -- si no esta vacia, se le propone la prediccion
                 proponerPred oraculo oracOriginal
@@ -150,7 +157,7 @@ proponerPreg oraculo oracOriginal = do
                 Nothing -> do
                     -- la opcion es invalida
                     printOpInvalida 
-                    putStrLn "Si no se encuentra la opción que deseas escoger, escribe: ninguna"
+                    putStrLn "+ Si no se encuentra la opción que deseas escoger, escribe: ninguna"
                     proponerPreg oraculo oracOriginal
 
 -- Funcion que imprime las opciones de una pregunta, separados por /
@@ -168,28 +175,43 @@ insertarOpcion (Pregunta preg ops) nuevaOpcion nuevaRespuesta =
 -- Funcion que imprime un texto que indica que la opcion que introdujo el usuario es invalida
 printOpInvalida :: IO  ()
 printOpInvalida = do
-    putStrLn "\n♦ El gran Haskinator no comprende tu elección." 
-    putStrLn "Por favor, selecciona una de las opciones que se te ofrece."
-    
+    putStrLn "\n⚠ El gran Haskinator no comprende tu elección." 
+    putStrLn "+ Por favor, selecciona una de las opciones que se te ofrece."
+
 -- Funcion que imprime un texto que indica que ya existe la prediccion en el oraculo y por lo tanto
 -- no se va a agregar al oraculo
 printPredYaExiste :: String -> IO ()
 printPredYaExiste predRepetida = do 
-    putStrLn $ "\n♦ Ya existe la predicción '" ++ predRepetida ++ "' en el oráculo."
-    putStrLn "Se va a rechazar la adición de esta predicción al oráculo por ser poco confiable."
+    putStrLn $ "\n⚠ Ya existe la predicción '" ++ predRepetida ++ "' en el oráculo."
+    putStrLn "+ Se va a rechazar la adición de esta predicción al oráculo por ser poco confiable."
 
 -- Funcion que guarda un oraculo en un archivo
 persistir :: Oraculo -> IO ()
 persistir oraculo = do
     putStrLn "\n♦ ¿Cómo deseas llamar al archivo?"
     nombre <- getLine
-    writeFile nombre (show oraculo)
-    putStrLn $ "\n♦ El oráculo ha sido guardado en el archivo '" ++ nombre ++ "'."
+    let contents = show oraculo
+    -- Se intenta escribir en el archivo
+    result <- try (writeFile nombre contents) :: IO (Either SomeException ())
+    case result of 
+        Left ex -> do
+            putStrLn $ "\n⚠ No se pudo escribir en el archivo: '" ++ nombre ++ "'."
+            putStrLn "+ Compruebe que el archivo no esté siendo utilizado actualmente."
+        Right _ -> putStrLn $ "\n♦ El oráculo ha sido guardado en el archivo '" ++ nombre ++ "'."
 
 -- Funcion que dado el nombre de un archivo, carga el oraculo que se encuentra en el archivo
 cargar :: String -> IO Oraculo
 cargar nombre = do
-    contenido <- readFile nombre
-    let oraculo = read contenido :: Oraculo
-    putStrLn $ "\n♦ El oráculo '" ++ nombre ++ "' ha sido cargado."
-    return oraculo
+    -- se intenta leer el arhivo
+    result <- try (readFile nombre) :: IO (Either SomeException String)
+    case result of
+        -- si se produjo un error al intentar abrir el archivo
+        Left ex -> do 
+            putStrLn $ "\n⚠ No se pudo abrir el archivo: '" ++ nombre ++ "'."
+            putStrLn "+ Compruebe si el archivo existe en la ubicación correcta y si no está siendo utilizado actualmente."
+            return $ crearOraculo ""
+        -- en caso contrario
+        Right contents -> do
+            let oraculo = read contents :: Oraculo
+            putStrLn $ "\n♦ El oráculo '" ++ nombre ++ "' ha sido cargado."
+            return oraculo
