@@ -30,6 +30,30 @@ make clean
 
 ## Detalles importantes de la implementación del oráculo
 
+### **main**
+
+El objetivo del `main` es permitir una interacción por consola con el usuario para adivinar predicciones.
+Se implementa lo siguiente:
+
+1. Se imprimen algunos mensajes de bienvenida para presentar el contexto al usuario.
+2. Se crea un oráculo vacío llamando a crearOraculo "".
+3. Se define una función `interactuar` que se encarga de la interacción principal utilizando el oráculo creado.
+
+### **interactuar**
+
+`interactuar` muestra un menú de opciones y pide al usuario elegir una. Según la opción ingresada, ejecuta una acción diferente:
+
+1. Crear un nuevo oráculo
+2. Predecir
+3. Persistir
+4. Cargar
+5. Consultar pregunta crucial
+6. Estadísticas.
+7. Salir
+
+Si la opción es inválida, muestra error y vuelve a interactuar.
+`interactuar` usa recursión para permitir múltiples interacciones en un loop.
+
 ### **obtenerCadena**
 
 La función `obtenerCadena` recibe un oráculo (tipo Oraculo) y una cadena de texto correspondiente a una predicción. Devuelve un valor de tipo Maybe [(String, String)]. \
