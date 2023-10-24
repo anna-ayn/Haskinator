@@ -51,13 +51,26 @@ Se implementa lo siguiente:
 6. Estadísticas.
 7. Salir
 
-Si la opción es inválida, muestra error y vuelve a interactuar.
+Si la opción es inválida, muestra error y vuelve a interactuar. \
 `interactuar` usa recursión para permitir múltiples interacciones en un loop.
+
+### **predecir**
+
+Inicia el proceso de predicción. Verifica si el oráculo es una predicción o pregunta y llama a `proponerPred` o `proponerPreg` respectivamente. En lo siguiente se detalla las funciones auxiliares que se utilizaron para implementar `predecir`
+
+1. `esPrediccion`: Devuelve true si el oráculo es una Prediccion.
+2. `proponerPred`: Propone la predicción al usuario y según su respuesta, termina o pide la predicción correcta. En caso de agregar la predicción correcta al oráculo se verifica que sea única.
+3. `proponerPreg`: Propone la pregunta al usuario. Según su respuesta, navega al sub-oráculo o pide una nueva opción/respuesta y la agrega al oráculo.
+4. `printOp`: Imprime las opciones de una pregunta separadas por /.
+5. `insertarOpcion`: Agrega una nueva opción y respuesta al oráculo correspondiente.
+6. `printPredYaExiste`: Imprime un mensaje de predicción repetida y que por lo tanto no se puede agregarlo al oráculo.
+
+También se utilizaron las funciones `obtenerCadena` y `printOpInvalida` que lo detallaremos más adelante.
 
 ### **obtenerCadena**
 
 La función `obtenerCadena` recibe un oráculo (tipo Oraculo) y una cadena de texto correspondiente a una predicción. Devuelve un valor de tipo Maybe [(String, String)]. \
-La implementación de `ObtenerCadena` utiliza una función auxiliar `buscar` para recorrer recursivamente la estructura del oráculo y construir la lista de tuplas (pregunta, opción) que corresponden al camino hacia la predicción dada. Además, para llamar a la función auxiliar `buscar` se pasa el oráculo, la predicción y una lista vacía para el camino. Luego, lo que hace `buscar` es que:
+La implementación de `ObtenerCadena` es similar al DFS (Depth First Search) para grafos. Asi mismo, esta función utiliza una función auxiliar `buscar` para recorrer recursivamente la estructura del oráculo y construir la lista de tuplas (pregunta, opción) que corresponden al camino hacia la predicción dada. Además, para llamar a la función auxiliar `buscar` se pasa el oráculo, la predicción y una lista vacía para el camino. Luego, lo que hace `buscar` es que:
 
 - Caso base: si recibe una Prediccion, verifica si coincide con la predicción buscada.
   - Si coincide, devuelve Just el camino.
@@ -70,3 +83,7 @@ Luego te terminar de ejecutar `buscar`, se hace pattern matching sobre el result
 
 - Si es Nothing, devuelve Nothing.
 - Si es Just camino, devuelve esto mismo.
+
+### **printOpInvalida**
+
+Imprime un mensaje de que la opción es inválida en caso de que la opción que introdujo el usuario no coincida con ninguna de las opciones propuestas.
