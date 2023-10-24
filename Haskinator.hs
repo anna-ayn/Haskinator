@@ -170,7 +170,9 @@ printOpInvalida :: IO  ()
 printOpInvalida = do
     putStrLn "\n♦ El gran Haskinator no comprende tu elección." 
     putStrLn "Por favor, selecciona una de las opciones que se te ofrece."
-
+    
+-- Funcion que imprime un texto que indica que ya existe la prediccion en el oraculo y por lo tanto
+-- no se va a agregar al oraculo
 printPredYaExiste :: String -> IO ()
 printPredYaExiste predRepetida = do 
     putStrLn $ "\n♦ Ya existe la predicción '" ++ predRepetida ++ "' en el oráculo."
