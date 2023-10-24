@@ -7,7 +7,8 @@ module Oraculo (
     pregunta,
     respuesta,
     opciones,
-    maybeOraculo
+    maybeOraculo,
+    obtenerCadena
     ) where
 
 -- Importanciones de modulos
@@ -51,15 +52,15 @@ opciones ::  Oraculo -> Opciones
 opciones (Pregunta s op) = op
 opciones (Prediccion s) = error "Debe ingresar una pregunta"
 
--- Funcion para hallar el oraculo de un maybe oraculo
-maybeOraculo :: Maybe Oraculo -> Oraculo
-maybeOraculo (Just a) = a
-maybeOraculo Nothing = error "No es una pregunta valida"
-
 -- Obtiene el oraculo respuesta asociado a una pregunta y una respuesta dada
 respuesta :: Oraculo -> String -> Oraculo
 respuesta (Pregunta s op) preg = maybeOraculo(M.lookup preg op)
 respuesta (Prediccion s) _ = error "Debe ingresar una pregunta"
+
+-- Funcion para hallar el oraculo de un maybe oraculo
+maybeOraculo :: Maybe Oraculo -> Oraculo
+maybeOraculo (Just a) = a
+maybeOraculo Nothing = error "No es una pregunta valida"
 
 -- La funcion obtenerCadena recibe un oraculo y una cadena de caracteres correspondiente a una prediccion. 
 -- Devuelve un valor de tipo Maybe [(String, String)]. 
@@ -79,7 +80,7 @@ obtenerCadena oraculo pred = do
 -- va a utilizarse para construir el camino a traves del oraculo que conduce a la prediccion dada. 
 -- Si encuentra un camino hacia la prediccion, retorna Just camino
 -- En caso contrario retorna una lista vacia = [] 
-buscar (Prediccion p) pred camino = 
+buscar (Prediccion p) pred camino = do
   -- Si buscar recibe una prediccion, se verifica que sea igual a la prediccion que se busca 
   -- si son iguales, retorna Just camino, en caso contrario retorna una lista vacia = []
   if p == pred then Just camino else return []

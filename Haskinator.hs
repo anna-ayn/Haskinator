@@ -39,10 +39,14 @@ interactuar oraculo = do
     case opcion of 
         "1" -> crearVision -- crear nuevo oraculo
         "2" -> do -- predecir
-            nuevOraculo <- predecir oraculo
+            let oracOriginal = oraculo
+            nuevOraculo <- predecir oraculo oracOriginal
             interactuar nuevOraculo
+        "3" -> do 
+            persistir oraculo
+            interactuar oraculo
         "7" -> do -- salir de haskinator
-            putStrLn "\n♦¡Hasta luego, viajero! Vuelve pronto."
+            putStrLn "\n♦ ¡Hasta luego, viajero! Vuelve pronto."
             return ()
         _ -> do -- opcion invalida
             printOpInvalida 
@@ -59,8 +63,8 @@ crearVision = do
     interactuar nuevoOraculo
 
 -- Predecir: Se comienza el proceso de prediccion
-predecir :: Oraculo -> IO Oraculo
-predecir oraculo = do
+predecir :: Oraculo -> Oraculo -> IO Oraculo
+predecir oraculo oracOriginal = do
     if esPrediccion oraculo -- si es una prediccion
         then do
             -- verificar que la prediccion no este vacia
@@ -70,8 +74,8 @@ predecir oraculo = do
                 putStrLn "Por favor crea un nuevo oráculo o cargue la información al oráculo antes de predecir."
                 return oraculo
             else do -- si no esta vacia, se le propone la prediccion
-                proponerPred oraculo
-    else proponerPreg oraculo -- si es una pregunta, se le propone la pregunta
+                proponerPred oraculo oracOriginal
+    else proponerPreg oraculo oracOriginal -- si es una pregunta, se le propone la pregunta
 
 -- Funcion que retorna True si el Oraculo es una Prediccion en caso contrario retorna False
 esPrediccion :: Oraculo -> Bool
@@ -79,8 +83,8 @@ esPrediccion (Prediccion _) = True
 esPrediccion _ = False
 
 -- Proponer al usuario la prediccion
-proponerPred :: Oraculo -> IO Oraculo
-proponerPred oraculo = do
+proponerPred :: Oraculo -> Oraculo -> IO Oraculo
+proponerPred oraculo oracOriginal = do
     let vision = prediccion oraculo
 
     -- El usuario decide si la prediccion es acertada o no
@@ -95,28 +99,27 @@ proponerPred oraculo = do
         return oraculo
       "No" -> do -- en caso contrario, debe pedir al usuario la respuesta correcta
         putStrLn "\n♦ ¡He fallado! ¿Cuál es la respuesta correcta?"
-        rtaCorrecta <- getLine
-        -- verificar que la respuesta correcta sea unica
-        if rtaCorrecta == vision then do 
-            putStrLn $ "\n♦ Ya existe la predicción '" ++ rtaCorrecta ++ "' en el oráculo."
-            putStrLn "Se va a rechazar la adición de esta predicción al oráculo por ser poco confiable."
+        predCorrecta <- getLine
+        -- verificar que la prediccion correcta sea unica
+        if (length $ obtenerCadena oracOriginal predCorrecta) > 0 || predCorrecta == vision then do 
+            printPredYaExiste predCorrecta
             return oraculo
         else do -- si es unica, se le pide al usuario las siguientes preguntas:
-            putStrLn $ "♦ ¿Qué pregunta distingue a " ++ rtaCorrecta ++ " de las otras opciones?"
+            putStrLn $ "♦ ¿Qué pregunta distingue a " ++ predCorrecta ++ " de las otras opciones?"
             pregDiferencia <- getLine
-            putStrLn $ "♦ ¿Cuál es la respuesta a '" ++ pregDiferencia ++ "' para " ++ rtaCorrecta ++"?"
+            putStrLn $ "♦ ¿Cuál es la respuesta a '" ++ pregDiferencia ++ "' para " ++ predCorrecta ++"?"
             opCorrecta <- getLine
             putStrLn $ "♦ ¿Cuál es la respuesta a '" ++ pregDiferencia ++ "' para " ++ vision ++"?"
             otraOpcion <- getLine
             -- se agrega esta nueva informacion al oraculo
-            return (ramificar [otraOpcion, opCorrecta] [oraculo, crearOraculo rtaCorrecta] pregDiferencia)
+            return (ramificar [otraOpcion, opCorrecta] [oraculo, crearOraculo predCorrecta] pregDiferencia)
       _ -> do -- opcion invalida
         printOpInvalida
-        proponerPred oraculo
+        proponerPred oraculo oracOriginal
 
 -- Proponer la pregunta al usuario
-proponerPreg :: Oraculo -> IO Oraculo
-proponerPreg oraculo = do
+proponerPreg :: Oraculo -> Oraculo -> IO Oraculo
+proponerPreg oraculo oracOriginal = do
     let preg = pregunta oraculo
     putStrLn ("\n" ++ preg)
     -- se imprime las opciones a esta pregunta, el usuario debe escoger una de ellas.
@@ -129,22 +132,26 @@ proponerPreg oraculo = do
         "ninguna" -> do
             putStrLn "\n♦ ¡He fallado! ¿Cuál es la respuesta correcta?"
             nuevaRespuesta <- getLine
-            putStrLn preg
-            nuevaOpcion <- getLine
-            -- se agrega al oraculo esta nueva opcion
-            return (insertarOpcion oraculo nuevaOpcion (crearOraculo nuevaRespuesta) )
+            if (length $ obtenerCadena oracOriginal nuevaRespuesta) > 0 then do
+                printPredYaExiste nuevaRespuesta
+                return oraculo
+            else do
+                putStrLn preg
+                nuevaOpcion <- getLine
+                -- se agrega al oraculo esta nueva opcion
+                return (insertarOpcion oraculo nuevaOpcion (crearOraculo nuevaRespuesta) )
         _ -> do -- verificar si el input que puso el usuario es una de las opciones validas
             case M.lookup input (opciones oraculo) of
                 Just val -> do
                     -- si la opcion es valida, se navega al sub-oraculo correspondiente
-                    siguiente <- predecir (respuesta oraculo input)
+                    siguiente <- predecir (respuesta oraculo input) oracOriginal
                     -- agrego los cambios del oraculo al oraculo original
                     return (insertarOpcion oraculo input siguiente)
                 Nothing -> do
                     -- la opcion es invalida
                     printOpInvalida 
                     putStrLn "Si no se encuentra la opción que deseas escoger, escribe: ninguna"
-                    proponerPreg oraculo
+                    proponerPreg oraculo oracOriginal
 
 -- Funcion que imprime las opciones de una pregunta, separados por /
 printOp :: Opciones -> IO ()
@@ -163,6 +170,11 @@ printOpInvalida :: IO  ()
 printOpInvalida = do
     putStrLn "\n♦ El gran Haskinator no comprende tu elección." 
     putStrLn "Por favor, selecciona una de las opciones que se te ofrece."
+
+printPredYaExiste :: String -> IO ()
+printPredYaExiste predRepetida = do 
+    putStrLn $ "\n♦ Ya existe la predicción '" ++ predRepetida ++ "' en el oráculo."
+    putStrLn "Se va a rechazar la adición de esta predicción al oráculo por ser poco confiable."
 
 -- Funcion que guarda un oraculo en un archivo
 persistir :: Oraculo -> IO ()
