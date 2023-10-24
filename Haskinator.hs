@@ -2,12 +2,15 @@ module Main (
     main
 ) where
 
+-- importaciones de modulos y librerias
 import System.IO
 import Control.Exception
 import Oraculo
 import qualified Data.Map as M
 import Data.List (intercalate)
 
+-- Main 
+main :: IO ()
 main = do
     putStrLn "# ¡Bienvenido valiente viajero al gran oráculo Haskinator!"
     putStrLn "# Has logrado llegar hasta la apartada choza del poderoso Haskinator,"
@@ -19,7 +22,8 @@ main = do
 
     interactuar $ crearOraculo ""
 
--- Se pide al usuario repetidamente que ingrese alguna de las opciones y luego pasa a ejecutarla
+-- interactuar: recibe un oraculo y devuelve una accion de E/S
+-- se pide al usuario repetidamente que ingrese alguna de las opciones disponibles y luego pasa a ejecutarla
 interactuar :: Oraculo -> IO ()
 interactuar oraculo = do 
         
@@ -59,7 +63,9 @@ interactuar oraculo = do
             printOpInvalida 
             interactuar oraculo
 
--- Crear un nuevo oraculo: se le pide al usuario una prediccion
+-- crearVision (funcion para crear un nuevo oraculo): 
+-- no recibe ningun argumento y devuelve una accion de E/S
+-- Se le pide al usuario una cadena de texto
 -- y se almacena como la unica prediccion del oraculo.
 crearVision :: IO ()
 crearVision = do 
@@ -69,7 +75,9 @@ crearVision = do
     putStrLn "\n♦ La visión ha sido agregada al oráculo."
     interactuar nuevoOraculo
 
--- Predecir: Se comienza el proceso de prediccion
+-- Predecir: Recibe dos oraculos, el primero es el oraculo en que estamos 
+-- y la segunda es el oraculo completo y, devuelve una accion de E/S y un oraculo 
+-- Esta funcion comienza el proceso de prediccion en el oraculo en que estamos
 predecir :: Oraculo -> Oraculo -> IO Oraculo
 predecir oraculo oracOriginal = do
     if esPrediccion oraculo -- si es una prediccion
@@ -84,12 +92,15 @@ predecir oraculo oracOriginal = do
                 proponerPred oraculo oracOriginal
     else proponerPreg oraculo oracOriginal -- si es una pregunta, se le propone la pregunta
 
--- Funcion que retorna True si el Oraculo es una Prediccion en caso contrario retorna False
+-- esPrediccion: Recibe un oraculo y devuelve un booleano
+-- Retorna True si el Oraculo es una Prediccion en caso contrario retorna False
 esPrediccion :: Oraculo -> Bool
 esPrediccion (Prediccion _) = True
 esPrediccion _ = False
 
--- Proponer al usuario la prediccion
+-- proponerPred: Recibe dos oraculos, el primero es el oraculo en que estamos 
+-- y la segunda es el oraculo completo y, devuelve una accion de E/S y un oraculo
+-- Funcion que propone al usuario la prediccion
 proponerPred :: Oraculo -> Oraculo -> IO Oraculo
 proponerPred oraculo oracOriginal = do
     let vision = prediccion oraculo
@@ -124,7 +135,9 @@ proponerPred oraculo oracOriginal = do
         printOpInvalida
         proponerPred oraculo oracOriginal
 
--- Proponer la pregunta al usuario
+-- proponerPreg: Recibe dos oraculos, el primero es el oraculo en que estamos 
+-- y la segunda es el oraculo completo y, devuelve una accion de E/S y un oraculo 
+-- Funcion que propone al usuario la pregunta
 proponerPreg :: Oraculo -> Oraculo -> IO Oraculo
 proponerPreg oraculo oracOriginal = do
     let preg = pregunta oraculo
@@ -160,32 +173,38 @@ proponerPreg oraculo oracOriginal = do
                     putStrLn "+ Si no se encuentra la opción que deseas escoger, escribe: ninguna"
                     proponerPreg oraculo oracOriginal
 
--- Funcion que imprime las opciones de una pregunta, separados por /
+-- printOP: Recibe las diferentes opciones asociada a una pregunta de un oraculo 
+-- y devuelve una accion de E/S
+-- Esta funcion imprime las opciones de una pregunta, separados por /
 printOp :: Opciones -> IO ()
 printOp elecciones = do
   let keys = M.keys elecciones
   putStrLn $ intercalate " / " keys
 
--- Funcion para agregar una nueva opcion y una nueva respuesta al oraculo
+-- insertarOpcion: Recibe dos oraculos y una cadena de texto y devuelve un oraculo modificado
+-- Esta funcion es para agregar una nueva opcion y una nueva respuesta al oraculo
 insertarOpcion :: Oraculo -> String -> Oraculo -> Oraculo 
 insertarOpcion (Pregunta preg ops) nuevaOpcion nuevaRespuesta = 
     let nuevasOpciones = M.insert nuevaOpcion nuevaRespuesta ops
     in Pregunta preg nuevasOpciones
 
--- Funcion que imprime un texto que indica que la opcion que introdujo el usuario es invalida
+-- printOpInvalida: Devuelve una accion de E/S
+-- Es una funcion que imprime un texto que indica que la opcion que introdujo el usuario es invalida
 printOpInvalida :: IO  ()
 printOpInvalida = do
     putStrLn "\n⚠ El gran Haskinator no comprende tu elección." 
     putStrLn "+ Por favor, selecciona una de las opciones que se te ofrece."
 
--- Funcion que imprime un texto que indica que ya existe la prediccion en el oraculo y por lo tanto
+-- printPredYaExiste: Recibe una cadena de texto y devuelve una accion de E/S
+-- La funcion imprime un texto que indica que ya existe la prediccion en el oraculo y por lo tanto
 -- no se va a agregar al oraculo
 printPredYaExiste :: String -> IO ()
 printPredYaExiste predRepetida = do 
     putStrLn $ "\n⚠ Ya existe la predicción '" ++ predRepetida ++ "' en el oráculo."
     putStrLn "+ Se va a rechazar la adición de esta predicción al oráculo por ser poco confiable."
 
--- Funcion que guarda un oraculo en un archivo
+-- persistir: recibe un oraculo y devuelve una accion de E/S
+-- La funcion guarda un oraculo en un archivo
 persistir :: Oraculo -> IO ()
 persistir oraculo = do
     putStrLn "\n♦ ¿Cómo deseas llamar al archivo?"
@@ -199,7 +218,8 @@ persistir oraculo = do
             putStrLn "+ Compruebe que el archivo no esté siendo utilizado actualmente."
         Right _ -> putStrLn $ "\n♦ El oráculo ha sido guardado en el archivo '" ++ nombre ++ "'."
 
--- Funcion que dado el nombre de un archivo, carga el oraculo que se encuentra en el archivo
+-- cargar: Recibe una cadena de texto y, devuelve una accion de E/S y un oraculo
+-- Esta funcion que dado el nombre de un archivo, carga el oraculo que se encuentra en el archivo
 cargar :: String -> IO Oraculo
 cargar nombre = do
     -- se intenta leer el arhivo
