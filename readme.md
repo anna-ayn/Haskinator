@@ -30,9 +30,7 @@ make clean
 
 ## Implementación del oráculo
 
-### Funciones
-
-#### **obtenerCadena**
+### **obtenerCadena**
 
 La función `obtenerCadena` recibe un oráculo (tipo Oraculo) y una cadena de texto correspondiente a una predicción. Devuelve un valor de tipo Maybe [(String, String)]. \
 La implementación de `ObtenerCadena` utiliza una función auxiliar `buscar` para recorrer recursivamente la estructura del oráculo y construir la lista de tuplas (pregunta, opción) que corresponden al camino hacia la predicción dada. Además, para llamar a la función auxiliar `buscar` se pasa el oráculo, la predicción y una lista vacía para el camino. Luego, lo que hace `buscar` es que:
