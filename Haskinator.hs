@@ -6,6 +6,7 @@ module Main (
 import System.IO
 import Control.Exception
 import Oraculo
+import Data.Maybe (isNothing, fromJust)
 import qualified Data.Map as M
 import Data.List (intercalate)
 
@@ -55,6 +56,9 @@ interactuar oraculo = do
             putStrLn "\n♦ ¿Cuál es el archivo que deseas mostrar al gran Haskinator?"
             nombreArchivo <- getLine
             oraculo <- cargar nombreArchivo
+            interactuar oraculo
+        "5" -> do
+            consultarPreguntaCrucial oraculo
             interactuar oraculo
         "7" -> do -- salir de haskinator
             putStrLn "\n♦ ¡Hasta luego, viajero! Vuelve pronto."
@@ -235,3 +239,37 @@ cargar nombre = do
             let oraculo = read contents :: Oraculo
             putStrLn $ "\n♦ El oráculo '" ++ nombre ++ "' ha sido cargado."
             return oraculo
+
+-- consultarPreguntaCrucial: Recibe un oraculo y devuelve una accion de E/S
+-- Esta funcion le pide al usuario dos predicciones y devuelve la pregunta crucial que las distingue
+consultarPreguntaCrucial :: Oraculo -> IO ()
+consultarPreguntaCrucial oraculo = do
+    -- se obtiene la cadena de tuplas que lleva a la prediccion 1
+    putStrLn $ "♦ Introduce la primera predicción: "
+    cadena1 <- getLine
+    let lista1 = obtenerCadena oraculo cadena1
+    -- se obtiene la cadena de tuplas que lleva a la prediccion 2
+    putStrLn $ "♦ Introduce la segunda predicción: "
+    cadena2 <- getLine
+    let lista2 = obtenerCadena oraculo cadena2
+    -- se verifica que ambas predicciones existan en el oraculo
+    if isNothing lista1 || isNothing lista2  then do
+        putStrLn "\n⚠ Alguna de las predicciones no existe en el oráculo."
+        putStrLn "+ Por favor, introduce dos predicciones válidas."
+    else do
+        -- se obtiene la pregunta crucial
+        let preguntaCrucial = consultarAncestroComun (fromJust lista1) (fromJust lista2)
+        putStrLn $ "\n♦ La pregunta crucial es: " ++ preguntaCrucial
+
+-- consultarAncestroComun: Recibe dos listas de tuplas y devuelve una cadena de texto
+-- Esta funcion recibe dos listas de tuplas que representan las cadenas de preguntas y respuestas
+-- que derivan en las prediccion 1 y 2 y devuelve la pregunta crucial que las distingue
+consultarAncestroComun :: [(String, String)] -> [(String, String)] -> String
+consultarAncestroComun lista1 lista2 =
+    -- se empaquetan las dos listas en una sola lista de tuplas
+    let lista = zip lista1 lista2
+    -- se toma la lista de tuplas hasta que las preguntas sean iguales
+        lista' = takeWhile (\((a, _), (b, _)) -> a == b) lista
+    -- se devuelve la pregunta de la ultima tupla
+    in fst $ fst $ last lista'
+
