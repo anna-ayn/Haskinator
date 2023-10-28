@@ -95,8 +95,8 @@ Pide al usuario que ingrese el nombre del archivo donde se va a guardar el orác
 ### **cargar**
 Pide al usuario que ingrese el nombre del archivo donde se va a cargar el oráculo. Se intenta leer, si no se puede, se ejecuta una excepción y se imprime un mensaje explicativo y se crea un oraculo vacio. Si se puede, se lee el oráculo del archivo y se retorna dicho oraculo.
 
-### **consultarAncestroComunBajo**
+### **consultarAncestroComunMasBajo**
 Recibe dos listas de tuplas correspondientes al camino en el arbol del oraculo de dos predicciones. Se combinan las dos listas en una lista de pares de preguntas y opciones mediante `zip`. Se recorre la lista de pares de preguntas y opciones hasta que se encuentre una pregunta que no coincida, en ese momento se retorna la ultima pregunta junto con las opciones de esa pregunta que llevan hacia las predicciones.
 
 ### **consultarPreguntaCrucial**
-Pide al usuario dos cadenas correspondientes a dos predicciones. Se obtienen los caminos de cada predicción mediante `obtenerCadena`. En caso de existir dichos caminos se llama a `consultarAncestroComunBajo` con los caminos obtenidos. Se imprime la pregunta crucial y las opciones que llevan a cada predicción.
+Pide al usuario dos cadenas correspondientes a dos predicciones. Se obtienen los caminos de cada predicción mediante `obtenerCadena`. En caso de existir dichos caminos se llama a `consultarAncestroComunMasBajo` con los caminos obtenidos. Se imprime la pregunta crucial y las opciones que llevan a cada predicción.
