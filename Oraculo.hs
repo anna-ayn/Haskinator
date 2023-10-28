@@ -14,7 +14,7 @@ module Oraculo (
 
 -- Importanciones de modulos
 import qualified Data.Map as M
-import Data.List (find)
+import Data.List as D
 
 -- Oraculo
 data Oraculo = Prediccion String
