@@ -111,8 +111,20 @@ Recibe un Oraculo y, si el mismo es una Pregunta, devuelve el tipo de dato Opcio
 
   -MaybeOraculo: Recibe un Maybe Oraculo que proviene de una llamada a la función lookup del modulo Data.Map y devuelve el Oraculo asociado si existe. 
 
-### **obtenerEstadistica**
-
 ### **respuesta**
 Recibe un Oraculo y un String,que corresponde a una respuesta, y, si el Oraculo es una Pregunta, este devuelve el Oraculo asociado a dicha respuesta. 
+
+### **obtenerEstadistica**
+Recibe un Oraculo y calcula el máximo, el mínimo y el promedio de preguntas necesarias para alcanzar una Prediccion. Lo hace llamando a varias funciones auxiliares. La manera en que obtenerEstadistica funciona es la siguiente:
+
+-auxEstadistica: Su función es manejar la lista de Oraculos y el contador de preguntas. Ella se encarga de enviar esta lista a divOra, para que las opciones de las Preguntas sean expandidas, ya que se encuentran en el tipo fromList, luego lleva esta nueva lista a calcularEstadistica con el contador. Cuando sale de calcularEstadistica, elimina las predicciones con removePred porque estas ya fueron contabilizadas y comienza el proceso otra vez. De esta manera, se ve el Oraculo como un objeto con capas, siendo cada capa los contenidos de las opciones de una Pregunta y, solo cuando sale de esta capa, se aumenta el contador de preguntas. 
+
+-divOra: Esta función se encarga de devolver la capa siguiente del Oraculo, si encuentra una Predicción, la mantiene, pero si encuentra una Pregunta, concatena a la lista las Opciones que contiene mediante la función de Data.Map elems. 
+
+-removePred: Si esta función se llama, entonces las predicciones, en la lista de Oraculos que se le pasa, ya fueron contabilizadas en la lista de Integer que guarda la cantidad de preguntas necesarias para alcanzar una respuesta. Luego, como no se necesitan, se eliminan para que las Preguntas pasen a expandirse.
+
+-calcularEstadistica: Es la que guarda en una lista de Integer el número de preguntas necesarias para llegar a una respuesta. Solo guarda dicho número si se llega a una predicción, pero si se llega a una pregunta se guarda el 0 que luego se elimina. 
+
+Luego, cuando se sale de auxEstadistica, volvemos a obtenerEstadistica para el sacar el maximo, el minimo y el promedio. Pero, primero, necesita eliminar los ceros y esto lo hace con removeCero. Una vez hecho esto, llama a intToDouble ya que se necesita un Double para calcular el promedio con promedioCalc; con roundTo, se redondea el resultado del promedio a un número con 5 decimales. Por último, se consigue el máximo y el minimo con las funciones maximum y minimum. 
+
 
