@@ -102,13 +102,7 @@ predecir oraculo oracOriginal = do
                 proponerPred oraculo oracOriginal
     else proponerPreg oraculo oracOriginal -- si es una pregunta, se le propone la pregunta
 
--- esPrediccion: Recibe un oraculo y devuelve un booleano
--- Retorna True si el Oraculo es una Prediccion en caso contrario retorna False
-esPrediccion :: Oraculo -> Bool
-esPrediccion (Prediccion _) = True
-esPrediccion _ = False
-
--- proponerPred: Recibe dos oraculos, el primero es el oraculo en que estamos 
+-- proponerPred: Recibe dos oraculos, el primero es el oraculo en que estamos
 -- y la segunda es el oraculo completo y, devuelve una accion de E/S y un oraculo
 -- Funcion que propone al usuario la prediccion
 proponerPred :: Oraculo -> Oraculo -> IO Oraculo
