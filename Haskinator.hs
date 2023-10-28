@@ -49,10 +49,10 @@ interactuar oraculo = do
             let oracOriginal = oraculo
             nuevOraculo <- predecir oraculo oracOriginal
             interactuar nuevOraculo
-        "3" -> do 
+        "3" -> do  -- persistir oraculo
             persistir oraculo
             interactuar oraculo
-        "4" -> do
+        "4" -> do -- cargar oraculo
             putStrLn "\n♦ ¿Cuál es el archivo que deseas mostrar al gran Haskinator?"
             nombreArchivo <- getLine
             oraculo <- cargar nombreArchivo
@@ -258,17 +258,17 @@ consultarPreguntaCrucial oraculo = do
         putStrLn "+ Por favor, introduce dos predicciones válidas."
     else do
         -- se obtiene la pregunta crucial
-        let (pregunta, opcion1, opcion2) = consultarAncestroComun (fromJust lista1) (fromJust lista2)
+        let (pregunta, opcion1, opcion2) = consultarAncestroComunBajo (fromJust lista1) (fromJust lista2)
         putStrLn $ "\n♦ Pregunta : '" ++ pregunta ++ "'"
         putStrLn $ "+ La opcion '" ++ opcion1 ++ "' lleva a '" ++ cadena1 ++ "'"
         putStrLn $ "+ La opcion '" ++ opcion2 ++ "' lleva a '" ++ cadena2 ++ "'"
 
--- consultarAncestroComun: Recibe dos listas de tuplas y devuelve una cadena de texto
+-- consultarAncestroComun: Recibe dos listas de tuplas y devuelve una tupla de tres cadenas de texto
 -- Esta funcion recibe dos listas de tuplas que representan las cadenas de preguntas y respuestas
 -- que derivan en las prediccion 1 y 2 y devuelve la pregunta crucial que las distingue junto con
 -- las opciones que llevan a cada prediccion
-consultarAncestroComun :: [(String, String)] -> [(String, String)] -> (String, String, String)
-consultarAncestroComun lista1 lista2 =
+consultarAncestroComunBajo :: [(String, String)] -> [(String, String)] -> (String, String, String)
+consultarAncestroComunBajo lista1 lista2 =
     -- se empaquetan las dos listas en una sola lista de tuplas
     let lista = zip lista1 lista2
     -- se toma la lista de tuplas hasta que las preguntas sean iguales
