@@ -60,6 +60,12 @@ interactuar oraculo = do
         "5" -> do
             consultarPreguntaCrucial oraculo
             interactuar oraculo
+        "6" -> do -- estadisticas
+            let (min, max, prom) = obtenerEstadisticas oraculo
+            putStrLn $ "\n♦ min: " ++ show min
+            putStrLn $ "♦ max: " ++ show max
+            putStrLn $ "♦ prom: " ++ show prom
+            interactuar oraculo
         "7" -> do -- salir de haskinator
             putStrLn "\n♦ ¡Hasta luego, viajero! Vuelve pronto."
             return ()
