@@ -263,7 +263,7 @@ consultarPreguntaCrucial oraculo = do
         putStrLn $ "+ La opcion '" ++ opcion1 ++ "' lleva a '" ++ cadena1 ++ "'"
         putStrLn $ "+ La opcion '" ++ opcion2 ++ "' lleva a '" ++ cadena2 ++ "'"
 
--- consultarAncestroComun: Recibe dos listas de tuplas y devuelve una tupla de tres cadenas de texto
+-- consultarAncestroComunMasBajo: Recibe dos listas de tuplas y devuelve una tupla de tres cadenas de texto
 -- Esta funcion recibe dos listas de tuplas que representan las cadenas de preguntas y respuestas
 -- que derivan en las prediccion 1 y 2 y devuelve la pregunta crucial que las distingue junto con
 -- las opciones que llevan a cada prediccion
