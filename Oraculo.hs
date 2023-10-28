@@ -8,7 +8,8 @@ module Oraculo (
     respuesta,
     opciones,
     maybeOraculo,
-    obtenerCadena
+    obtenerCadena,
+    obtenerEstadisticas
     ) where
 
 -- Importanciones de modulos
@@ -62,6 +63,70 @@ maybeOraculo :: Maybe Oraculo -> Oraculo
 maybeOraculo (Just a) = a
 maybeOraculo Nothing = error "No es una pregunta valida"
 
+--Funcion que transforma un Integer en un Double para llamar a la funcion que calcula el promedio 
+intToDouble :: Integer -> Double
+intToDouble n = fromIntegral n
+
+--Funcion que calcula el promedio de una lista de Doubles
+promedioCalc :: [Double] -> Double
+promedioCalc n = sum(n)/D.genericLength(n)
+
+--Funcion que remueve los 0 de una lista de Integers
+removeCero :: [Integer] -> [Integer]
+removeCero [] = []
+removeCero (h:t)
+    | h == 0 = removeCero t
+    | h > 0 = h : removeCero t
+
+--Funcion que remueve las Predicciones de una lista de Oraculos
+removePred :: [Oraculo] -> [Oraculo]
+removePred [] = []
+removePred (h:t)
+    | esPrediccion(h) = removePred t
+    | otherwise = h : removePred t
+
+--Funcion que recibe una lista de Oraculos y expande las Opciones de las Preguntas como una lista de oraculos para que puedan pasar por calcularEstadistica. 
+divOra ::  [Oraculo] -> [Oraculo]
+divOra [] = []
+divOra (h:t) 
+    | esPrediccion(h) = h : divOra t
+    | otherwise = M.elems(op) ++ divOra t
+        where 
+        op = opciones h
+
+--Funcion que recibe una lista de Oraculos y un Integer que comineza en 1, con esto llama a calcularEstadistica con una lista expandida devulve una concatencación de esos resultados
+--Luego, le aumneta uno al contador de preguntas y elimina las predicciones de la lista de Oraculos, para volver a llamar a divOra
+auxEstadistica :: [Oraculo] -> Integer -> [Integer]
+auxEstadistica [] num = []
+auxEstadistica m num = calcularEstadistica listaExpandida num ++ auxEstadistica listaSinPredicciones i
+    where 
+    i = num + 1
+    listaExpandida = divOra m
+    listaSinPredicciones = removePred listaExpandida
+
+-Funcion que recibe una lista de Oraculos y un Integer (este Integer representa el contador de preguntas en ese momento). Agrega en una lista de Integer 0, si el Oraculo es una Pregunta, o i, si el oraculo es una Prediccion.
+calcularEstadistica :: [Oraculo] -> Integer -> [Integer]
+calcularEstadistica [] i = return [] i
+calcularEstadistica (h:t) i 
+    | esPrediccion(h) = return i ++ calcularEstadistica t i
+    |otherwise =  do
+       return 0 ++ calcularEstadistica t i
+
+--Funcion para redondear un a un numero especifico de decimales
+roundTo :: Integer -> Double -> Double
+roundTo n x = (fromInteger $ round $ x * (10^n)) / (10.0^^n)
+
+--A partir de un Oraculo de pregunta, devuelve el maxino, minimo y el promedio del numero de preguntas para llegar a una predicción
+obtenerEstadisticas :: Oraculo -> (Integer, Integer, Double)
+--Devuelve la tuplo con solo ceros si se le pasa una prediccion
+obtenerEstadisticas (Prediccion s) = (0,0,0.0)
+--De lo contrario, llama a auxEstadistica, luego elimina los ceros innecesarios y calcula lo necesario para devolver lo pedido
+obtenerEstadisticas (Pregunta s op) =  (minimum listaEstadisticaSinCeros, maximum listaEstadisticaSinCeros, promedio)
+    where 
+    listaEstadistaCompleta = auxEstadistica [(Pregunta s op)] 1
+    listaEstadisticaSinCeros = removeCero listaEstadistaCompleta
+    promedio = roundTo 5 (promedioCalc (map intToDouble listaEstadisticaSinCeros)) 
+
 -- La funcion obtenerCadena recibe un oraculo y una cadena de caracteres correspondiente a una prediccion. 
 -- Devuelve un valor de tipo Maybe [(String, String)]. 
 -- Si la prediccion suministrado no pertenece al oraculo, se retorna Nothing. 
@@ -75,6 +140,8 @@ obtenerCadena oraculo pred = do
   case result of
     Just [] -> Nothing
     _ -> result
+
+
 
 -- La funcion buscar recibe un oraculo, una cadena de texto y una lista de tuplas (String, String). Esta lista
 -- va a utilizarse para construir el camino a traves del oraculo que conduce a la prediccion dada. 
