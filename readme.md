@@ -88,7 +88,6 @@ Luego te terminar de ejecutar `buscar`, se hace pattern matching sobre el result
 
 Imprime un mensaje de que la opción es inválida en caso de que la opción que introdujo el usuario no coincida con ninguna de las opciones propuestas.
 
-
 ### **persistir**
 Pide al usuario que ingrese el nombre del archivo donde se va a guardar el oráculo. Se intenta escribir, si no se puede, se ejecuta una excepción y se imprime un mensaje explicativo. Si se puede, se escribe el oráculo en el archivo y se imprime un mensaje de éxito.
 
@@ -100,3 +99,20 @@ Recibe dos listas de tuplas correspondientes al camino en el arbol del oraculo d
 
 ### **consultarPreguntaCrucial**
 Pide al usuario dos cadenas correspondientes a dos predicciones. Se obtienen los caminos de cada predicción mediante `obtenerCadena`. En caso de existir dichos caminos se llama a `consultarAncestroComunMasBajo` con los caminos obtenidos. Se imprime la pregunta crucial y las opciones que llevan a cada predicción.
+
+### **prediccion**
+Recibe un Ooraculo y, si el mismo es una Predicción, devuelve el String con dicha predicción.
+
+### **pregunta**
+Recibe un Oraculo y, si el mismo es una Pregunta, devuelve el String que contiene la pregunta a la que se refiere dicho oraculo.
+
+### **opciones**
+Recibe un Oraculo y, si el mismo es una Pregunta, devuelve el tipo de dato Opciones asociado a dicha pregunta. Para ello llama a la función MaybeOraculo. 
+
+  -MaybeOraculo: Recibe un Maybe Oraculo que proviene de una llamada a la función lookup del modulo Data.Map y devuelve el Oraculo asociado si existe. 
+
+### **obtenerEstadistica**
+
+### **respuesta**
+Recibe un Oraculo y un String,que corresponde a una respuesta, y, si el Oraculo es una Pregunta, este devuelve el Oraculo asociado a dicha respuesta. 
+
