@@ -90,7 +90,7 @@ Imprime un mensaje de que la opción es inválida en caso de que la opción que 
 
 
 ### **persistir**
-Pide al usuario que ingrese el nombre del archivo donde se va a guardar el oráculo. Se intenta escribir, si no se puede, se ejecuta una excepción y se imprime un mensaje de error. Si se puede, se escribe el oráculo en el archivo y se imprime un mensaje de éxito.
+Pide al usuario que ingrese el nombre del archivo donde se va a guardar el oráculo. Se intenta escribir, si no se puede, se ejecuta una excepción y se imprime un mensaje explicativo. Si se puede, se escribe el oráculo en el archivo y se imprime un mensaje de éxito.
 
 ### **cargar**
 Pide al usuario que ingrese el nombre del archivo donde se va a cargar el oráculo. Se intenta leer, si no se puede, se ejecuta una excepción y se imprime un mensaje explicativo y se crea un oraculo vacio. Si se puede, se lee el oráculo del archivo y se retorna dicho oraculo.
