@@ -257,8 +257,9 @@ consultarPreguntaCrucial oraculo = do
         putStrLn "\n⚠ Alguna de las predicciones no existe en el oráculo."
         putStrLn "+ Por favor, introduce dos predicciones válidas."
     else do
-        -- se obtiene la pregunta crucial
+        -- se obtiene la pregunta crucial consultando el ancestro comun mas bajo de ambas predicciones
         let (pregunta, opcion1, opcion2) = consultarAncestroComunMasBajo (fromJust lista1) (fromJust lista2)
+        -- se imprime la pregunta crucial y las opciones que llevan a cada prediccion
         putStrLn $ "\n♦ Pregunta : '" ++ pregunta ++ "'"
         putStrLn $ "+ La opcion '" ++ opcion1 ++ "' lleva a '" ++ cadena1 ++ "'"
         putStrLn $ "+ La opcion '" ++ opcion2 ++ "' lleva a '" ++ cadena2 ++ "'"
