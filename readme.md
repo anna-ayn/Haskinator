@@ -28,13 +28,13 @@ make clean
 
 - **NOTA** : al ejecutar `make clean`, se va a borrar todos los archivos .hi y .o que se han creado en el paso 1, inclusive el programa ejecutable `haskinator` por lo que el programa no va a existir luego de hacer este paso.
 
-## Detalles importantes de la implementación del oráculo
-
-### **Formato**
+## **Formato**
 El deriving(Read, Show) nos da el siguiente formato para los Oraculos:
 
 - Prediccion = Prediccion "prediccion asociada"
 - Pregunta = Pregunta "pregunta asociada" (Data.Map.fromList[("respuesta 1",Oraculo),("respuesta 2",Oraculo)...])
+
+## Detalles importantes de la implementación del oráculo
 
 ### **main**
 
