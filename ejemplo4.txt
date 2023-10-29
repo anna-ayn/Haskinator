@@ -1,0 +1,1 @@
+Pregunta "Es un personaje principal?" (fromList [("No",Pregunta "Era el villano principal de la pelicula?" (fromList [("No",Prediccion "Teller"),("Si",Prediccion "Strauss")])),("Si",Pregunta "Es un cientifico?" (fromList [("No",Prediccion "Groves"),("Si",Prediccion "Oppenheimer")]))])
