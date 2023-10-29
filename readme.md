@@ -101,7 +101,7 @@ Pide al usuario que ingrese el nombre del archivo donde se va a guardar el orác
 
 ### **cargar**
 
-Pide al usuario que ingrese el nombre del archivo donde se va a cargar el oráculo. Se intenta leer, si no se puede, se ejecuta una excepción y se imprime un mensaje explicativo y se retorna un oráculo vacío. Si se puede, se lee el oráculo del archivo y se retorna dicho oraculo.
+Pide al usuario que ingrese el nombre del archivo donde se va a cargar el oráculo. Se intenta leer, si no se puede se ejecuta una excepción y se imprime un mensaje explicativo y se retorna un oráculo vacío. Si se puede leer, se hace `read` con el contenido del archivo y si el contenido del archivo representa un oráculo se retorna dicho oraculo, en caso contrario, se produce una excepción y se imprime un mensaje explicativo y se retorna un oráculo vacío.
 
 ### **consultarAncestroComunMasBajo**
 
