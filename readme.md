@@ -30,6 +30,12 @@ make clean
 
 ## Detalles importantes de la implementación del oráculo
 
+### **Formato**
+El deriving(Read, Show) nos da el siguiente formato para los Oraculos:
+
+- Prediccion = Prediccion "prediccion asociada"
+- Pregunta = Pregunta "pregunta asociada" (Data.Map.fromList[("respuesta 1",Oraculo"),("respuesta 2",Oraculo)...])
+
 ### **main**
 
 El objetivo del `main` es permitir una interacción por consola con el usuario para adivinar predicciones.
