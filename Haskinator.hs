@@ -233,6 +233,7 @@ cargar nombre = do
         Left ex -> do 
             putStrLn $ "\n⚠ No se pudo abrir el archivo: '" ++ nombre ++ "'."
             putStrLn "+ Compruebe si el archivo existe en la ubicación correcta y si no está siendo utilizado actualmente."
+            -- va a retornar un oraculo vacio.
             return $ crearOraculo ""
         -- en caso contrario
         Right contents -> do
