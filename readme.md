@@ -34,7 +34,7 @@ make clean
 El deriving(Read, Show) nos da el siguiente formato para los Oraculos:
 
 - Prediccion = Prediccion "prediccion asociada"
-- Pregunta = Pregunta "pregunta asociada" (Data.Map.fromList[("respuesta 1",Oraculo"),("respuesta 2",Oraculo)...])
+- Pregunta = Pregunta "pregunta asociada" (Data.Map.fromList[("respuesta 1",Oraculo),("respuesta 2",Oraculo)...])
 
 ### **main**
 
