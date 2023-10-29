@@ -6,7 +6,6 @@ module Oraculo (
     prediccion,
     pregunta,
     respuesta,
-    esPrediccion,
     opciones,
     maybeOraculo,
     obtenerCadena,

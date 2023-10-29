@@ -46,8 +46,7 @@ interactuar oraculo = do
     case opcion of 
         "1" -> crearVision -- crear nuevo oraculo
         "2" -> do -- predecir
-            let oracOriginal = oraculo
-            nuevOraculo <- predecir oraculo oracOriginal
+            nuevOraculo <- predecir oraculo oraculo
             interactuar nuevOraculo
         "3" -> do  -- persistir oraculo
             persistir oraculo
@@ -89,19 +88,16 @@ crearVision = do
 -- y la segunda es el oraculo completo y, devuelve una accion de E/S y un oraculo 
 -- Esta funcion comienza el proceso de prediccion en el oraculo en que estamos
 predecir :: Oraculo -> Oraculo -> IO Oraculo
-predecir oraculo oracOriginal = do
-    if esPrediccion oraculo -- si es una prediccion
-        then do
-            -- verificar que la prediccion no este vacia
-            let vision = prediccion oraculo
-            if vision == "" then do 
-                putStrLn "\n♦ El oráculo no posee conocimientos aún."
-                putStrLn "+ Por favor crea un nuevo oráculo o cargue la información al oráculo antes de predecir."
-                return oraculo
-            else do -- si no esta vacia, se le propone la prediccion
-                proponerPred oraculo oracOriginal
-    else proponerPreg oraculo oracOriginal -- si es una pregunta, se le propone la pregunta
-
+-- si es una prediccion, verifica si esta vacio el oraculo y si no esta vacio, se le propone la prediccion
+predecir (Prediccion vision) oracOriginal = do
+    if vision == "" then do 
+        putStrLn "\n♦ El oráculo no posee conocimientos aún."
+        putStrLn "+ Por favor crea un nuevo oráculo o cargue la información al oráculo antes de predecir."
+        return oracOriginal
+    else proponerPred (Prediccion vision) oracOriginal
+-- si es una pregunta, se le propone la pregunta
+predecir (Pregunta preg ops) oracOriginal = proponerPreg (Pregunta preg ops) oracOriginal  
+    
 -- proponerPred: Recibe dos oraculos, el primero es el oraculo en que estamos
 -- y la segunda es el oraculo completo y, devuelve una accion de E/S y un oraculo
 -- Funcion que propone al usuario la prediccion
@@ -237,9 +233,21 @@ cargar nombre = do
             return $ crearOraculo ""
         -- en caso contrario
         Right contents -> do
-            let oraculo = read contents :: Oraculo
-            putStrLn $ "\n♦ El oráculo '" ++ nombre ++ "' ha sido cargado."
-            return oraculo
+            let oraculo = read contents :: Oraculo -- convierte el contenido del archivo en un Oraculo
+            eVal <- try (esOraculo oraculo) :: IO (Either SomeException Bool) 
+            case eVal of
+                Left e -> do -- si el contenido convertido en Oraculo no es un oraculo, retorna un oraculo vacio
+                    putStrLn $ "\n⚠ El contenido del archivo no representa un oráculo."
+                    return $ crearOraculo ""
+                Right n -> do -- en caso contrario, retorna dicho oraculo
+                    putStrLn $ "\n♦ El oráculo '" ++ nombre ++ "' ha sido cargado."
+                    return oraculo
+
+-- esOraculo: Recibe un oraculo y devuelve un booleano
+-- Retorna True si el Oraculo es una Prediccion o una Pregunta
+esOraculo :: Oraculo -> IO Bool
+esOraculo (Prediccion _) = do putStr $ ""; return True
+esOraculo (Pregunta _ _) = do putStr $ ""; return True
 
 -- consultarPreguntaCrucial: Recibe un oraculo y devuelve una accion de E/S
 -- Esta funcion le pide al usuario dos predicciones y devuelve la pregunta crucial que las distingue
